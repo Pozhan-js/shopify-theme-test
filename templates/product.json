@@ -49,6 +49,10 @@
           "type": "description",
           "settings": {}
         },
+        "product_table": {
+          "type": "product_table",
+          "settings": {}
+        },
         "share": {
           "type": "share",
           "settings": {
@@ -64,6 +68,7 @@
         "quantity_selector",
         "buy_buttons",
         "description",
+        "product_table",
         "share"
       ],
       "settings": {

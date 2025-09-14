@@ -2329,6 +2329,20 @@
               "default": "Heading"
             }
           }
+        },
+        "product_table": {
+          "name": "Product Table",
+          "settings": {
+            "table_border_color": {
+              "label": "Table border color"
+            },
+            "table_text_color": {
+              "label": "Table text color"
+            },
+            "table_font_size": {
+              "label": "Table font size"
+            }
+          }
         }
       },
       "settings": {

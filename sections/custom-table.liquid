@@ -1,0 +1,158 @@
+{% comment %}
+  This section creates a customizable table.
+  You can set colors and add rows dynamically.
+{% endcomment %}
+
+<style>
+  .custom-table-wrapper-{{ section.id }} {
+    padding: 20px 0;
+  }
+
+  .custom-table-{{ section.id }} {
+    width: 100%;
+    border-collapse: collapse;
+    color: {{ section.settings.text_color }};
+  }
+
+  .custom-table-{{ section.id }}
+  th
+  , .custom-table-{{ section.id }}
+  td {
+    border: 1px solid{{ section.settings.border_color }};
+    padding: 12px;
+    text-align: left;
+  }
+
+  .custom-table-{{ section.id }}
+  th {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  .custom-table-title-{{ section.id }} {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+</style>
+
+<div class="page-width custom-table-wrapper-{{ section.id }}">
+  {% if section.settings.title != blank %}
+    <h2 class="h2 custom-table-title-{{ section.id }}">{{ section.settings.title | escape }}</h2>
+  {% endif %}
+
+  <table class="custom-table-{{ section.id }}">
+    <thead>
+      <tr>
+        {% if section.settings.heading_1 != blank %}
+          <th>{{ section.settings.heading_1 | escape }}</th>
+        {% endif %}
+        {% if section.settings.heading_2 != blank %}
+          <th>{{ section.settings.heading_2 | escape }}</th>
+        {% endif %}
+        {% if section.settings.heading_3 != blank %}
+          <th>{{ section.settings.heading_3 | escape }}</th>
+        {% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for block in section.blocks %}
+        <tr {{ block.shopify_attributes }}>
+          {% if section.settings.heading_1 != blank %}
+            <td>{{ block.settings.cell_1 }}</td>
+          {% endif %}
+          {% if section.settings.heading_2 != blank %}
+            <td>{{ block.settings.cell_2 }}</td>
+          {% endif %}
+          {% if section.settings.heading_3 != blank %}
+            <td>{{ block.settings.cell_3 }}</td>
+          {% endif %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% schema %}
+  {
+    "name": "t:sections.custom_table.name",
+    "tag": "section",
+    "class": "section",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "表格标题",
+        "default": "自定义表格"
+      },
+      {
+        "type": "header",
+        "content": "颜色设置"
+      },
+      {
+        "type": "color",
+        "id": "border_color",
+        "label": "边框颜色",
+        "default": "#cccccc"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "字体颜色",
+        "default": "#333333"
+      }, {
+        "type": "header",
+        "content": "表头设置 (最多3列)"
+      }, {
+        "type": "text",
+        "id": "heading_1",
+        "label": "第 1 列标题",
+        "default": "标题 1"
+      }, {
+        "type": "text",
+        "id": "heading_2",
+        "label": "第 2 列标题",
+        "default": "标题 2"
+      }, {
+        "type": "text",
+        "id": "heading_3",
+        "label": "第 3 列标题",
+        "default": "标题 3"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "table_row",
+        "name": "表格行",
+        "settings": [
+          {
+            "type": "richtext",
+            "id": "cell_1",
+            "label": "第 1 列内容",
+            "default": "<p>单元格内容</p>"
+          }, {
+            "type": "richtext",
+            "id": "cell_2",
+            "label": "第 2 列内容",
+            "default": "<p>单元格内容</p>"
+          }, {
+            "type": "richtext",
+            "id": "cell_3",
+            "label": "第 3 列内容",
+            "default": "<p>单元格内容</p>"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "自定义表格",
+        "blocks": [
+          {
+            "type": "table_row"
+          }, {
+            "type": "table_row"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

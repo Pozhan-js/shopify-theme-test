@@ -188,7 +188,8 @@
       "taxes_included": "Taxes included.",
       "duties_included": "Duties included.",
       "duties_and_taxes_included": "Duties and taxes included.",
-      "shipping_policy_html": "<a href=\"{{ link }}\">Shipping</a> calculated at checkout."
+      "shipping_policy_html": "<a href=\"{{ link }}\">Shipping</a> calculated at checkout.",
+      "no_table_data": "No table data available"
     },
     "modal": {
       "label": "Media gallery"
@@ -383,6 +384,24 @@
       "min_error": "This item has a minimum of {{ min }}",
       "max_error": "This item has a maximum of {{ max }}",
       "step_error": "You can only add this item in increments of {{ step }}"
+    },
+    "main-product": {
+      "blocks": {
+        "product_table": {
+          "name": "Product Table",
+          "settings": {
+            "table_border_color": {
+              "label": "Table Border Color"
+            },
+            "table_text_color": {
+              "label": "Table Text Color"
+            },
+            "table_font_size": {
+              "label": "Table Font Size"
+            }
+          }
+        }
+      }
     }
   },
   "localization": {

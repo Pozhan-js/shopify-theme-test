@@ -2007,6 +2007,20 @@
               "label": "库存盘点"
             }
           }
+        },
+        "product_table": {
+          "name": "产品表格",
+          "settings": {
+            "table_border_color": {
+              "label": "表格边框颜色"
+            },
+            "table_text_color": {
+              "label": "表格文字颜色"
+            },
+            "table_font_size": {
+              "label": "表格字体大小"
+            }
+          }
         }
       },
       "settings": {

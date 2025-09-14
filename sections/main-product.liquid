@@ -31,6 +31,25 @@
       padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
     }
 
+    .product-variant-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: var(--table-font-size);
+      color: var(--table-text-color);
+    }
+
+    .product-variant-table th,
+    .product-variant-table td {
+      border: 1px solid var(--table-border-color);
+      padding: 8px;
+      text-align: left;
+    }
+
+    .product-variant-table th {
+      background-color: #f2f2f2;
+    }
+
     @media screen and (min-width: 750px) {
       .section-{{ section.id }}-padding {
         padding-top: {{ section.settings.padding_top }}px;
@@ -271,6 +290,7 @@
                           {{- 'icon-minus.svg' | inline_asset_content -}}
                         </span>
                       </button>
+
                       <input
                         class="quantity__input"
                         type="number"
@@ -296,6 +316,7 @@
                         </span>
                       </button>
                     </quantity-input>
+
                     {%- liquid
                       assign volume_pricing_array = product.selected_or_first_available_variant.quantity_price_breaks | sort: 'quantity' | reverse
                       assign current_qty_for_volume_pricing = cart_qty | plus: product.selected_or_first_available_variant.quantity_rule.min
@@ -383,6 +404,10 @@
                         {%- endif -%}
                       </price-per-item>
                     {%- endif -%}
+
+                    <!--
+                      product table removed from inline price-per-item container; table is rendered via product_table block
+                    -->
                   </div>
                   <div class="quantity__rules caption" id="Quantity-Rules-{{ section.id }}">
                     {%- if product.selected_or_first_available_variant.quantity_rule.increment > 1 -%}
@@ -582,10 +607,11 @@
                                 {% endif %}
                               >
                                 <ul class="list-unstyled" role="list">
-                                  {%- for product in recommendations.products
-                                    limit: block.settings.products_per_page
-                                    offset: continue
+                                  {%- assign start_index = forloop.index0 | times: block.settings.products_per_page -%}
+                                  {%- assign paged_products = recommendations.products
+                                    | slice: start_index, block.settings.products_per_page
                                   -%}
+                                  {%- for product in paged_products -%}
                                     <li>
                                       {%- if block.settings.enable_quick_add -%}
                                         {% assign quick_add = 'standard' %}
@@ -674,6 +700,47 @@
                 </product-recommendations>
               {%- when 'icon-with-text' -%}
                 {% render 'icon-with-text', block: block %}
+              {%- when 'product_table' -%}
+                <div class="product__title" {{ block.shopify_attributes }}>
+                  {%- assign cols = product.options_with_values -%}
+                  {%- if cols and cols.size > 0 -%}
+                    <table
+                      class="product-variant-table"
+                      style="--table-border-color: {{ block.settings.table_border_color | default: '#dddddd' }}; --table-text-color: {{ block.settings.table_text_color | default: '#222222' }}; --table-font-size: {{ block.settings.table_font_size | default: 16 }}px;"
+                    >
+                      <thead>
+                        <tr>
+                          {%- for opt in product.options -%}
+                            <th>{{ opt }}</th>
+                          {%- endfor -%}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          {%- for col in cols -%}
+                            <td>
+                              <ul class="option-values" style="list-style:none;padding:0;margin:0;">
+                                {%- for val in col.values -%}
+                                  <li style="padding:4px 0;border-bottom:1px solid rgba(0,0,0,0.04);">{{ val }}</li>
+                                {%- endfor -%}
+                              </ul>
+                            </td>
+                          {%- endfor -%}
+                        </tr>
+                      </tbody>
+                    </table>
+                  {%- else -%}
+                    <p class="product__no-table-data">{{ 'products.product.no_table_data' | t | default: '暂无表格数据' }}</p>
+                  {%- endif -%}
+                </div>
+                {%- comment -%} Debug: print metafields only in theme editor or with ?debug_meta=1 {%- endcomment -%}
+                {%- if request.design_mode or request.params.debug_meta == '1' -%}
+                  <div class="debug-meta" style="background:#f6f6f6;border:1px solid #ddd;padding:10px;margin-top:10px;word-break:break-word;font-family:monospace;white-space:pre-wrap;">
+                    <strong>DEBUG: product.metafields.custom</strong>
+                    <span>{{ product | json }}</span>
+                 
+                  </div>
+                {%- endif -%}
             {%- endcase -%}
           {%- endfor -%}
           <a href="{{ product.url }}" class="link product__view-details animate-arrow">
@@ -724,13 +791,7 @@
       <script src="{{ 'product-model.js' | asset_url }}" defer></script>
     {%- endif -%}
 
-    {%- liquid
-      if product.selected_or_first_available_variant.featured_media
-        assign seo_media = product.selected_or_first_available_variant.featured_media
-      else
-        assign seo_media = product.featured_media
-      endif
-    -%}
+    {%- comment -%} seo_media assignment removed (was unused) {%- endcomment -%}
 
     <script type="application/ld+json">
       {{ product | structured_data }}
@@ -744,9 +805,6 @@
   "tag": "section",
   "class": "section",
   "blocks": [
-    {
-      "type": "@app"
-    },
     {
       "type": "text",
       "name": "t:sections.main-product.blocks.text.name",
@@ -1670,7 +1728,7 @@
               "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__44.label"
             }
           ],
-          "default": "heart",
+          "default": "truck",
           "label": "t:sections.main-product.blocks.icon_with_text.settings.icon_1.label"
         },
         {
@@ -1870,7 +1928,7 @@
               "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__44.label"
             }
           ],
-          "default": "return",
+          "default": "truck",
           "label": "t:sections.main-product.blocks.icon_with_text.settings.icon_2.label"
         },
         {
@@ -2086,6 +2144,34 @@
           "info": "t:sections.main-product.blocks.icon_with_text.settings.heading.info"
         }
       ]
+    },
+    {
+      "type": "product_table",
+      "name": "t:sections.main-product.blocks.product_table.name",
+      "settings": [
+        {
+          "type": "color",
+          "id": "table_border_color",
+          "label": "t:sections.main-product.blocks.product_table.settings.table_border_color.label",
+          "default": "#dddddd"
+        },
+        {
+          "type": "color",
+          "id": "table_text_color",
+          "label": "t:sections.main-product.blocks.product_table.settings.table_text_color.label",
+          "default": "#222222"
+        },
+        {
+          "type": "range",
+          "id": "table_font_size",
+          "min": 12,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "label": "t:sections.main-product.blocks.product_table.settings.table_font_size.label",
+          "default": 16
+        }
+      ]
     }
   ],
   "settings": [
@@ -2266,3 +2352,23 @@
   ]
 }
 {% endschema %}
+
+{% comment %} Debug: show product metafields structure when ?debug_meta=1 or in theme editor {% endcomment %}
+{%- if request.design_mode or request.query.debug_meta == '1' -%}
+  <div class="product__meta-debug" style="white-space:pre-wrap;background:#f7f7f7;padding:12px;border:1px solid #eee;margin:12px 0;font-size:12px;">
+    <strong>product.metafields (debug)</strong>
+    <pre>{{ product.metafields | json }}</pre>
+
+    <strong>product.metafields.custom (debug)</strong>
+    <pre>{{ product.metafields.custom | json }}</pre>
+
+    <strong>product.metafields.custom['test-1'] (debug)</strong>
+    <pre>{{ product.metafields.custom['test-1'] | json }}</pre>
+
+    <strong>product.metafields.custom['test-2'] (debug)</strong>
+    <pre>{{ product.metafields.custom['test-2'] | json }}</pre>
+
+    <strong>product.metafields.custom['test-3'] (debug)</strong>
+    <pre>{{ product.metafields.custom['test-3'] | json }}</pre>
+  </div>
+{%- endif -%}

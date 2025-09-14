@@ -1,0 +1,70 @@
+{%- comment -%}
+  Snippet: table-from-metafields.liquid
+  Renders a table from a product's metafields.
+
+  Expected product metafields namespace: `table`
+  - table.heading_1 (string)
+  - table.heading_2 (string)
+  - table.heading_3 (string)
+  - table.rows (string) -> rows separated by newlines, cells separated by `|` (pipe)
+
+  Usage: {% render 'table-from-metafields', product: product %}
+{%- endcomment -%}
+
+{%- assign p = product -%}
+{%- if p and p.metafields and p.metafields.table -%}
+  {%- assign heading_1 = p.metafields.table.heading_1.value | default: '' -%}
+  {%- assign heading_2 = p.metafields.table.heading_2.value | default: '' -%}
+  {%- assign heading_3 = p.metafields.table.heading_3.value | default: '' -%}
+  {%- assign rows_raw = p.metafields.table.rows.value | default: '' -%}
+
+  {%- if heading_1 != '' or heading_2 != '' or heading_3 != '' or rows_raw != '' -%}
+    <style>
+      .mf-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 16px;
+      }
+      .mf-table th,
+      .mf-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      .mf-table th {
+        background: #f7f7f7;
+      }
+    </style>
+
+    <table class="mf-table" role="table">
+      <thead>
+        <tr>
+          {% if heading_1 != '' %}
+            <th>{{ heading_1 }}</th>
+          {% endif %}
+          {% if heading_2 != '' %}
+            <th>{{ heading_2 }}</th>
+          {% endif %}
+          {% if heading_3 != '' %}
+            <th>{{ heading_3 }}</th>
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% assign rows = rows_raw | split: '\n' %}
+        {% for r in rows %}
+          {% assign cells = r | split: '|' %}
+          <tr>
+            <td>{{ cells[0] | default: '' }}</td>
+            {% if heading_2 != '' %}
+              <td>{{ cells[1] | default: '' }}</td>
+            {% endif %}
+            {% if heading_3 != '' %}
+              <td>{{ cells[2] | default: '' }}</td>
+            {% endif %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {%- endif -%}
+{%- endif -%}
