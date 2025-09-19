@@ -15,9 +15,17 @@
         "padding_top": 28,
         "padding_bottom": 28
       }
+    },
+     "my_custom_section": {
+      "type": "my_custom_section",
+      "settings": {
+        "heading": "This is the default heading from JSON",
+        "text": "<p>This content is pre-filled when you create a page with the 'test' template.</p>"
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "my_custom_section"
   ]
 }

@@ -1,0 +1,33 @@
+<div class="my-simple-section" style="background: red; color: white; padding: 20px; margin: 20px; border: 5px solid blue;">
+  <h2>{{ section.settings.heading }}</h2>
+  <p>{{ section.settings.text }}</p>
+  <p>DEBUG: Section is loading correctly!</p>
+  <p>
+    <strong>VISIBLE TEST: If you see this red box, the section is working!</strong>
+  </p>
+</div>
+
+{% schema %}
+  {
+    "name": "My Simple Section",
+    "settings": [
+      {
+        "type": "text",
+        "id": "heading",
+        "label": "Heading",
+        "default": "Welcome to my store"
+      }, {
+        "type": "richtext",
+        "id": "text",
+        "label": "Text",
+        "default": "<p>This is a simple section. You can customize the content in the theme editor.</p>"
+      }
+    ],
+    "presets": [
+      {
+        "name": "My Simple Section",
+        "category": "Custom content"
+      }
+    ]
+  }
+{% endschema %}
