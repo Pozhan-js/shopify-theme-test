@@ -701,38 +701,7 @@
               {%- when 'icon-with-text' -%}
                 {% render 'icon-with-text', block: block %}
               {%- when 'product_table' -%}
-                <div class="product__title" {{ block.shopify_attributes }}>
-                  {%- assign cols = product.options_with_values -%}
-                  {%- if cols and cols.size > 0 -%}
-                    <table
-                      class="product-variant-table"
-                      style="--table-border-color: {{ block.settings.table_border_color | default: '#dddddd' }}; --table-text-color: {{ block.settings.table_text_color | default: '#222222' }}; --table-font-size: {{ block.settings.table_font_size | default: 16 }}px;"
-                    >
-                      <thead>
-                        <tr>
-                          {%- for opt in product.options -%}
-                            <th>{{ opt }}</th>
-                          {%- endfor -%}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          {%- for col in cols -%}
-                            <td>
-                              <ul class="option-values" style="list-style:none;padding:0;margin:0;">
-                                {%- for val in col.values -%}
-                                  <li style="padding:4px 0;border-bottom:1px solid rgba(0,0,0,0.04);">{{ val }}</li>
-                                {%- endfor -%}
-                              </ul>
-                            </td>
-                          {%- endfor -%}
-                        </tr>
-                      </tbody>
-                    </table>
-                  {%- else -%}
-                    <p class="product__no-table-data">{{ 'products.product.no_table_data' | t | default: '暂无表格数据' }}</p>
-                  {%- endif -%}
-                </div>
+                {%- render 'product-variant-table', product: product, block: block -%}
                 {%- comment -%} Debug: print metafields only in theme editor or with ?debug_meta=1 {%- endcomment -%}
                 {%- if request.design_mode or request.params.debug_meta == '1' -%}
                   <div class="debug-meta" style="background:#f6f6f6;border:1px solid #ddd;padding:10px;margin-top:10px;word-break:break-word;font-family:monospace;white-space:pre-wrap;">

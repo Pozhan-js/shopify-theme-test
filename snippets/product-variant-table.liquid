@@ -1,0 +1,145 @@
+{% comment %}
+  Product Variant Table Snippet
+  
+  Renders a product variant table with options and values
+  
+  Accepts:
+  - product: {Object} Product object (required)
+  - block: {Object} Block object for shopify attributes and settings (optional)
+  - border_radius: {String} Border radius for table corners (default: '8px')
+  - hover_color: {String} Background color for row hover effect (default: '#f8f9fa')
+  - table_border_color: {String} Border color for table (default: '#dddddd')
+  - table_text_color: {String} Text color for table (default: '#222222')
+  - table_font_size: {Number} Font size for table text (default: 16)
+  
+  Usage:
+  {% render 'product-variant-table', product: product, block: block %}
+{% endcomment %}
+
+{%- liquid
+  assign border_radius = border_radius | default: '8px'
+  assign hover_color = hover_color | default: '#f8f9fa'
+  assign table_border_color = table_border_color | default: '#dddddd'
+  assign table_text_color = table_text_color | default: '#222222'
+  assign table_font_size = table_font_size | default: 16
+  
+  if block.settings.table_border_color
+    assign table_border_color = block.settings.table_border_color
+  endif
+  if block.settings.table_text_color
+    assign table_text_color = block.settings.table_text_color
+  endif
+  if block.settings.table_font_size
+    assign table_font_size = block.settings.table_font_size
+  endif
+  if block.settings.border_radius
+    assign border_radius = block.settings.border_radius
+  endif
+  if block.settings.hover_color
+    assign hover_color = block.settings.hover_color
+  endif
+-%}
+
+<style>
+  .product-variant-table-wrapper {
+    margin-top: 20px;
+    overflow: hidden;
+    border-radius: {{ border_radius }};
+    border: 1px solid {{ table_border_color }};
+  }
+  
+  .product-variant-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: {{ table_font_size }}px;
+    color: {{ table_text_color }};
+    margin: 0;
+  }
+
+  .product-variant-table th,
+  .product-variant-table td {
+    border: none;
+    border-right: 1px solid {{ table_border_color }};
+    padding: 12px 8px;
+    text-align: left;
+    vertical-align: top;
+  }
+  
+  .product-variant-table th:last-child,
+  .product-variant-table td:last-child {
+    border-right: none;
+  }
+
+  .product-variant-table th {
+    background-color: #f2f2f2;
+    font-weight: 600;
+    border-bottom: 1px solid {{ table_border_color }};
+  }
+  
+  .product-variant-table tbody tr {
+    transition: background-color 0.2s ease;
+  }
+  
+  .product-variant-table tbody tr:hover {
+    background-color: {{ hover_color }};
+  }
+  
+  .option-values {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .option-values li {
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    transition: color 0.2s ease;
+  }
+  
+  .option-values li:last-child {
+    border-bottom: none;
+  }
+  
+  .product-variant-table tbody tr:hover .option-values li {
+    color: {{ table_text_color }};
+  }
+  
+  .product__no-table-data {
+    padding: 20px;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+  }
+</style>
+
+<div class="product__title"{% if block %} {{ block.shopify_attributes }}{% endif %}>
+  {%- assign cols = product.options_with_values -%}
+  {%- if cols and cols.size > 0 -%}
+    <div class="product-variant-table-wrapper">
+      <table class="product-variant-table">
+        <thead>
+          <tr>
+            {%- for opt in product.options -%}
+              <th>{{ opt }}</th>
+            {%- endfor -%}
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            {%- for col in cols -%}
+              <td>
+                <ul class="option-values">
+                  {%- for val in col.values -%}
+                    <li>{{ val }}</li>
+                  {%- endfor -%}
+                </ul>
+              </td>
+            {%- endfor -%}
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  {%- else -%}
+    <p class="product__no-table-data">{{ 'products.product.no_table_data' | t | default: '暂无表格数据' }}</p>
+  {%- endif -%}
+</div>
