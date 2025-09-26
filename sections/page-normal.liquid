@@ -1,0 +1,464 @@
+{% comment %}
+  页面主区域 Section（全部内容通过 block 配置和渲染）
+  用于 normal 页面，支持 Hero、Feature、CTA、正文富文本等块自由组合。
+{% endcomment %}
+
+<section
+  id="PageNormal"
+  class="page-normal color-background gradient"
+  data-template="page-normal">
+  <div class="page-normal__inner">
+    {% for block in section.blocks %}
+      {% case block.type %}
+        {% when 'hero' %}
+          <div class="page-normal-hero" style="position:relative;overflow:hidden;min-height:{{ block.settings.height }}vh;background:{{ block.settings.bg_color }};">
+            {% if block.settings.bg_image != blank %}
+              <img
+                src="{{ block.settings.bg_image | image_url: width: 1920 }}"
+                alt="{{ block.settings.bg_image_alt | escape }}"
+                width="1920"
+                height="600"
+                style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:0;">
+            {% endif %}
+            <div class="page-normal-hero__content" style="position:relative;z-index:2;max-width:780px;margin:0 auto;padding:clamp(2rem,6vw,5rem) clamp(1rem,4vw,2.75rem);color:{{ block.settings.text_color }};text-align:{{ block.settings.text_align }};">
+              {% if block.settings.subheading != blank %}
+                <p class="page-normal-hero__subheading">{{ block.settings.subheading | escape }}</p>
+              {% endif %}
+              {% if block.settings.heading != blank %}
+                <h1 class="page-normal-hero__heading h1">{{ block.settings.heading | escape }}</h1>
+              {% endif %}
+              {% if block.settings.richtext != blank %}
+                <div class="page-normal-hero__richtext rte">{{ block.settings.richtext }}</div>
+              {% endif %}
+              {% if block.settings.button_label != blank and block.settings.button_link != blank %}
+                <div class="page-normal-hero__actions">
+                  <a href="{{ block.settings.button_link }}" class="button button--primary">{{ block.settings.button_label | escape }}</a>
+                  {% if block.settings.secondary_button_label != blank and block.settings.secondary_button_link != blank %}
+                    <a href="{{ block.settings.secondary_button_link }}" class="button button--secondary">{{ block.settings.secondary_button_label | escape }}</a>
+                  {% endif %}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        {% when 'feature' %}
+          <div class="feature-tile" style="background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:16px;padding:clamp(1.2rem,2vw,1.6rem);display:flex;flex-direction:column;gap:.85rem;max-width:340px;margin:0 auto 2rem;">
+            <div class="feature-tile__media" style="width:60px;height:60px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#f5f8ff,#eef3ff);border-radius:14px;overflow:hidden;">
+              {% if block.settings.image != blank %}
+                <img
+                  src="{{ block.settings.image | image_url: width: 300 }}"
+                  alt="{{ block.settings.image_alt | escape }}"
+                  width="60"
+                  height="60"
+                  style="width:100%;height:100%;object-fit:cover;">
+              {% elsif block.settings.icon != blank %}
+                <div class="feature-tile__icon">{{ block.settings.icon }}</div>
+              {% else %}
+                <div class="feature-tile__placeholder" aria-hidden="true">{{ 'image' | placeholder_svg_tag }}</div>
+              {% endif %}
+            </div>
+            <div class="feature-tile__body">
+              {% if block.settings.title != blank %}
+                <h3 class="feature-tile__title h5">{{ block.settings.title | escape }}</h3>
+              {% endif %}
+              {% if block.settings.text != blank %}
+                <p class="feature-tile__text">{{ block.settings.text }}</p>
+              {% endif %}
+              {% if block.settings.link_label != blank and block.settings.link_url != blank %}
+                <a href="{{ block.settings.link_url }}" class="feature-tile__link link underlined-link">{{ block.settings.link_label | escape }}</a>
+              {% endif %}
+            </div>
+          </div>
+        {% when 'cta' %}
+          <div class="page-normal-cta-band" style="position:relative;padding:clamp(2.8rem,7vw,4.5rem) 0;text-align:center;background:{{ block.settings.bg_mode }};color:{{ block.settings.text_color }};">
+            {% if block.settings.bg_mode == 'image' and block.settings.bg_image != blank %}
+              <img
+                src="{{ block.settings.bg_image | image_url: width: 1600 }}"
+                alt="{{ block.settings.bg_image_alt | escape }}"
+                width="1600"
+                height="400"
+                style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:0;">
+              <div style="position:absolute;inset:0;background:#000;opacity:{{ block.settings.overlay | divided_by: 100.0 }};z-index:1;"></div>
+            {% endif %}
+            <div class="cta-band__inner" style="position:relative;z-index:2;max-width:860px;margin:0 auto;">
+              {% if block.settings.kicker != blank %}
+                <p class="cta-band__kicker">{{ block.settings.kicker | escape }}</p>
+              {% endif %}
+              {% if block.settings.heading != blank %}
+                <h2 class="cta-band__heading h2">{{ block.settings.heading | escape }}</h2>
+              {% endif %}
+              {% if block.settings.text != blank %}
+                <div class="cta-band__text rte">{{ block.settings.text }}</div>
+              {% endif %}
+              {% if block.settings.button_label != blank and block.settings.button_link != blank %}
+                <div class="cta-band__actions" style="display:inline-flex;flex-wrap:wrap;gap:1rem;">
+                  <a href="{{ block.settings.button_link }}" class="button button--primary">{{ block.settings.button_label | escape }}</a>
+                  {% if block.settings.secondary_button_label != blank and block.settings.secondary_button_link != blank %}
+                    <a href="{{ block.settings.secondary_button_link }}" class="button button--secondary">{{ block.settings.secondary_button_label | escape }}</a>
+                  {% endif %}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        {% when 'richtext' %}
+          <div class="page-normal-richtext page-width page-width--narrow" style="padding:2rem 0;">
+            {% if block.settings.heading != blank %}
+              <h1 class="main-page-title page-title h0">{{ block.settings.heading | escape }}</h1>
+            {% endif %}
+            {% if block.settings.content != blank %}
+              <div class="rte">{{ block.settings.content }}</div>
+            {% endif %}
+          </div>
+      {% endcase %}
+    {% endfor %}
+  </div>
+</section>
+
+<style>
+  .page-normal {
+    --page-normal-max-width: 1200px;
+    --page-normal-gutter-x: clamp(1rem, 2vw, 2rem);
+    --page-normal-block-gap: clamp(2.2rem, 4vw, 4.5rem);
+    --page-normal-heading-weight: 600;
+    font-family: var(--font-body-family, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif);
+    line-height: 1.5;
+    background: var(--color-background, #f8f9fa);
+  }
+  .page-normal__inner {
+    max-width: var(--page-normal-max-width);
+    margin: 0 auto;
+    padding: 2.5rem var(--page-normal-gutter-x) 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--page-normal-block-gap);
+  }
+  .page-normal h1,
+  .page-normal h2,
+  .page-normal h3,
+  .page-normal h4,
+  .page-normal h5,
+  .page-normal h6 {
+    font-family: var(--font-heading-family, var(--font-body-family));
+    font-weight: var(--page-normal-heading-weight);
+    line-height: 1.15;
+    letter-spacing: 0.02em;
+    word-break: break-word;
+  }
+  .page-normal h1 {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+  }
+  .page-normal h2 {
+    font-size: clamp(1.75rem, 3.2vw, 2.2rem);
+  }
+  .page-normal h3 {
+    font-size: clamp(1.4rem, 2.4vw, 1.75rem);
+  }
+  .page-normal h4 {
+    font-size: clamp(1.2rem, 2vw, 1.4rem);
+  }
+  .page-normal p,
+  .page-normal li {
+    font-size: 1rem;
+  }
+  .page-normal p + p {
+    margin-top: 1rem;
+  }
+  .page-normal .button {
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    transition: box-shadow 0.25s var(--motion-ease, ease)
+    , transform 0.25s var(--motion-ease, ease);
+    background: var(--color-accent, #1d3bff);
+    color: #fff;
+    padding: 0.7em 1.5em;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+  }
+  .page-normal .button--secondary {
+    background: #fff;
+    color: var(--color-accent, #1d3bff);
+    border: 1px solid var(--color-accent, #1d3bff);
+  }
+  .page-normal .button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px -6px rgba(0, 0, 0, .15)
+    , 0 2px 4px rgba(0, 0, 0, .08);
+  }
+  .page-normal .button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .2);
+  }
+  .page-normal img,
+  .page-normal video,
+  .page-normal .deferred-media {
+    border-radius: 14px;
+    box-shadow: 0 4px 16px -6px rgba(0, 0, 0, .12)
+    , 0 2px 8px -2px rgba(0, 0, 0, .08);
+  }
+  .page-normal__inner > .is-full-bleed {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+  }
+  @media (max-width: 680px) {
+    .page-normal__inner {
+      padding-top: 1.75rem;
+      padding-bottom: 3rem;
+    }
+    .page-normal {
+      --page-normal-block-gap: 2.75rem;
+    }
+    .feature-tile {
+      max-width: 100%;
+    }
+  }
+</style>
+
+{% schema %}
+  {
+    "name": "页面主区域（自定义布局）",
+    "tag": "section",
+    "class": "section page-normal-section",
+    "blocks": [
+      {
+        "type": "hero",
+        "name": "顶部横幅 Hero",
+        "settings": [
+          {
+            "type": "text",
+            "id": "subheading",
+            "label": "副标题"
+          },
+          {
+            "type": "text",
+            "id": "heading",
+            "label": "主标题",
+            "default": "你的精彩开场"
+          },
+          {
+            "type": "richtext",
+            "id": "richtext",
+            "label": "描述",
+            "default": "<p>一段引人注目的描述文案，突出独特价值。</p>"
+          },
+          {
+            "type": "image_picker",
+            "id": "bg_image",
+            "label": "背景图片"
+          }, {
+            "type": "text",
+            "id": "bg_image_alt",
+            "label": "背景图片替代文本"
+          }, {
+            "type": "range",
+            "id": "height",
+            "label": "高度 (vh)",
+            "min": 30,
+            "max": 100,
+            "step": 5,
+            "default": 60
+          }, {
+            "type": "color",
+            "id": "bg_color",
+            "label": "背景色",
+            "default": "#222"
+          }, {
+            "type": "color",
+            "id": "text_color",
+            "label": "文字色",
+            "default": "#fff"
+          }, {
+            "type": "select",
+            "id": "text_align",
+            "label": "文字对齐",
+            "default": "center",
+            "options": [
+              {
+                "value": "left",
+                "label": "左"
+              }, {
+                "value": "center",
+                "label": "居中"
+              }, {
+                "value": "right",
+                "label": "右"
+              }
+            ]
+          }, {
+            "type": "text",
+            "id": "button_label",
+            "label": "主按钮文案",
+            "default": "立即探索"
+          }, {
+            "type": "url",
+            "id": "button_link",
+            "label": "主按钮链接"
+          }, {
+            "type": "text",
+            "id": "secondary_button_label",
+            "label": "次按钮文案"
+          }, {
+            "type": "url",
+            "id": "secondary_button_link",
+            "label": "次按钮链接"
+          }
+        ]
+      }, {
+        "type": "feature",
+        "name": "特性卡片 Feature",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "标题"
+          },
+          {
+            "type": "textarea",
+            "id": "text",
+            "label": "描述"
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "图片 (可选)"
+          },
+          {
+            "type": "text",
+            "id": "image_alt",
+            "label": "图片替代文本"
+          }, {
+            "type": "html",
+            "id": "icon",
+            "label": "自定义 SVG/Icon HTML (可选)"
+          }, {
+            "type": "text",
+            "id": "link_label",
+            "label": "链接文案"
+          }, {
+            "type": "url",
+            "id": "link_url",
+            "label": "链接 URL"
+          }
+        ]
+      }, {
+        "type": "cta",
+        "name": "号召性横幅 CTA Band",
+        "settings": [
+          {
+            "type": "text",
+            "id": "kicker",
+            "label": "Kicker 文案",
+            "default": "下一步"
+          },
+          {
+            "type": "text",
+            "id": "heading",
+            "label": "主标题",
+            "default": "准备好开始了吗？"
+          },
+          {
+            "type": "richtext",
+            "id": "text",
+            "label": "描述",
+            "default": "<p>一段简洁的强化转化文案，帮助用户采取行动。</p>"
+          },
+          {
+            "type": "text",
+            "id": "button_label",
+            "label": "主按钮文案",
+            "default": "立即行动"
+          }, {
+            "type": "url",
+            "id": "button_link",
+            "label": "主按钮链接"
+          }, {
+            "type": "text",
+            "id": "secondary_button_label",
+            "label": "次按钮文案"
+          }, {
+            "type": "url",
+            "id": "secondary_button_link",
+            "label": "次按钮链接"
+          }, {
+            "type": "select",
+            "id": "bg_mode",
+            "label": "背景模式",
+            "default": "linear-gradient(135deg,#1d3bff,#7928ff)",
+            "options": [
+              {
+                "value": "var(--color-background-secondary,#111)",
+                "label": "纯色/主题色"
+              }, {
+                "value": "linear-gradient(135deg,#1d3bff,#7928ff)",
+                "label": "渐变"
+              }, {
+                "value": "image",
+                "label": "图片"
+              }
+            ]
+          }, {
+            "type": "image_picker",
+            "id": "bg_image",
+            "label": "背景图片 (当选择图片模式)"
+          }, {
+            "type": "text",
+            "id": "bg_image_alt",
+            "label": "背景图片替代文本"
+          }, {
+            "type": "range",
+            "id": "overlay",
+            "label": "图片遮罩不透明度(%)",
+            "min": 0,
+            "max": 90,
+            "step": 5,
+            "default": 40
+          }, {
+            "type": "color",
+            "id": "text_color",
+            "label": "文字色",
+            "default": "#fff"
+          }
+        ]
+      }, {
+        "type": "richtext",
+        "name": "正文富文本区域",
+        "settings": [
+          {
+            "type": "text",
+            "id": "heading",
+            "label": "标题",
+            "default": "页面标题"
+          }, {
+            "type": "richtext",
+            "id": "content",
+            "label": "正文内容",
+            "default": "<p>这里是页面正文内容，可在主题编辑器中自由编辑。</p>"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "页面主区域（自定义布局）",
+        "category": "页面",
+        "blocks": [
+          {
+            "type": "hero"
+          },
+          {
+            "type": "feature"
+          },
+          {
+            "type": "feature"
+          },
+          {
+            "type": "cta"
+          }, {
+            "type": "richtext"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}
