@@ -1,0 +1,49 @@
+{
+  "sections": {
+    "custom_table_preview": {
+      "type": "custom-table",
+      "blocks": {
+        "row_1": {
+          "type": "table_row",
+          "settings": {
+            "cell_1": "<p>产品名称</p>",
+            "cell_2": "<p>价格</p>",
+            "cell_3": "<p>库存</p>"
+          }
+        },
+        "row_2": {
+          "type": "table_row",
+          "settings": {
+            "cell_1": "<p>iPhone 15</p>",
+            "cell_2": "<p>¥5999</p>",
+            "cell_3": "<p>有现货</p>"
+          }
+        },
+        "row_3": {
+          "type": "table_row",
+          "settings": {
+            "cell_1": "<p>MacBook Air</p>",
+            "cell_2": "<p>¥8999</p>",
+            "cell_3": "<p>预订中</p>"
+          }
+        }
+      },
+      "block_order": [
+        "row_1",
+        "row_2",
+        "row_3"
+      ],
+      "settings": {
+        "title": "产品信息表",
+        "border_color": "#e5e5e5",
+        "text_color": "#333333",
+        "heading_1": "产品",
+        "heading_2": "价格",
+        "heading_3": "状态"
+      }
+    }
+  },
+  "order": [
+    "custom_table_preview"
+  ]
+}
