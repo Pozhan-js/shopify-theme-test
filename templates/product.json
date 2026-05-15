@@ -51,7 +51,11 @@
         },
         "product_table": {
           "type": "product_table",
-          "settings": {}
+          "settings": {
+            "table_border_color": "#dddddd",
+            "table_text_color": "#334fb4",
+            "table_font_size": 16
+          }
         },
         "share": {
           "type": "share",
