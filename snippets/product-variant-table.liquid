@@ -46,6 +46,7 @@
     overflow: hidden;
     border-radius: {{ border_radius }};
     border: 1px solid {{ table_border_color }};
+    background-color: #ffffff;
   }
   
   .product-variant-table {
@@ -71,17 +72,18 @@
   }
 
   .product-variant-table th {
-    background-color: #f2f2f2;
+    background: linear-gradient(90deg, #2563eb 0%, #ef4444 100%);
+    color: #ffffff;
     font-weight: 600;
     border-bottom: 1px solid {{ table_border_color }};
   }
   
   .product-variant-table tbody tr {
-    transition: background-color 0.2s ease;
+    transition: background-color 0.25s ease;
   }
   
   .product-variant-table tbody tr:hover {
-    background-color: {{ hover_color }};
+    background-color: rgba(37, 99, 235, 0.04);
   }
   
   .option-values {
@@ -91,17 +93,40 @@
   }
   
   .option-values li {
-    padding: 4px 0;
+    padding: 10px 12px;
     border-bottom: 1px solid rgba(0,0,0,0.04);
-    transition: color 0.2s ease;
+    border-radius: 8px;
+    transition:
+      background-color 0.25s ease,
+      color 0.25s ease,
+      transform 0.25s ease,
+      box-shadow 0.25s ease;
   }
   
   .option-values li:last-child {
     border-bottom: none;
   }
+
+  .option-values li:hover {
+    background: linear-gradient(90deg, rgba(37, 99, 235, 0.12) 0%, rgba(239, 68, 68, 0.12) 100%);
+    color: {{ table_text_color }};
+    transform: translateX(6px);
+    box-shadow: inset 3px 0 0 #2563eb;
+  }
   
   .product-variant-table tbody tr:hover .option-values li {
     color: {{ table_text_color }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-variant-table th,
+    .product-variant-table td {
+      padding: 10px 6px;
+    }
+
+    .option-values li {
+      padding: 8px 10px;
+    }
   }
   
   .product__no-table-data {
