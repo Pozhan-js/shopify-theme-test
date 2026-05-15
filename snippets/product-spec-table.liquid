@@ -1,0 +1,197 @@
+{% comment %}
+  Renders a product specification table.
+
+  Accepts:
+  - product: {Object} Product object (required)
+  - block: {Object} Block object for shopify attributes and settings (optional)
+{% endcomment %}
+
+{%- liquid
+  assign p = product
+  assign table_border_color = '#dddddd'
+  assign table_text_color = '#222222'
+  assign table_font_size = 16
+  assign spec_table_scope = block.id | default: p.id
+  assign spec_label_category = 'Category'
+  assign spec_label_size = 'Size'
+  assign spec_label_color = 'Color'
+  assign spec_label_heat = 'Popularity'
+  assign heat_label_hot = 'Hot'
+  assign heat_label_best = 'Best Seller'
+  assign heat_label_good = 'Good'
+  assign heat_label_normal = 'Normal'
+
+  if block and block.settings.table_border_color
+    assign table_border_color = block.settings.table_border_color
+  endif
+  if block and block.settings.table_text_color
+    assign table_text_color = block.settings.table_text_color
+  endif
+  if block and block.settings.table_font_size
+    assign table_font_size = block.settings.table_font_size
+  endif
+
+  if request.locale.iso_code == 'zh-CN' or request.locale.iso_code == 'zh-Hans'
+    assign spec_label_category = '分类'
+    assign spec_label_size = '尺寸'
+    assign spec_label_color = '颜色'
+    assign spec_label_heat = '热度'
+    assign heat_label_hot = '火爆'
+    assign heat_label_best = '热销'
+    assign heat_label_good = '良好'
+    assign heat_label_normal = '一般'
+  endif
+-%}
+
+{%- if p != blank -%}
+  {%- assign category_values = '' -%}
+  {%- for collection in p.collections -%}
+    {%- assign collection_title = collection.title | strip -%}
+    {%- assign collection_prefix = collection_title | slice: 0, 9 -%}
+    {%- if collection_prefix == 'spec-cat:' -%}
+      {%- assign normalized_category = collection_title | remove_first: 'spec-cat:' | strip -%}
+      {%- if normalized_category != blank -%}
+        {%- if category_values == blank -%}
+          {%- assign category_values = normalized_category -%}
+        {%- else -%}
+          {%- assign existing_categories = category_values | split: ' / ' -%}
+          {%- unless existing_categories contains normalized_category -%}
+            {%- assign category_values = category_values | append: ' / ' | append: normalized_category -%}
+          {%- endunless -%}
+        {%- endif -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- assign size_values = '' -%}
+  {%- assign color_values = '' -%}
+  {%- for option in p.options_with_values -%}
+    {%- assign option_name = option.name | downcase | strip -%}
+    {%- if option_name == '尺寸' or option_name == '尺码' or option_name == 'size' -%}
+      {%- for value in option.values -%}
+        {%- assign normalized_value = value | strip -%}
+        {%- if normalized_value != blank -%}
+          {%- if size_values == blank -%}
+            {%- assign size_values = normalized_value -%}
+          {%- else -%}
+            {%- assign existing_sizes = size_values | split: ' / ' -%}
+            {%- unless existing_sizes contains normalized_value -%}
+              {%- assign size_values = size_values | append: ' / ' | append: normalized_value -%}
+            {%- endunless -%}
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+
+    {%- if option_name == '颜色' or option_name == 'color' -%}
+      {%- for value in option.values -%}
+        {%- assign normalized_value = value | strip -%}
+        {%- if normalized_value != blank -%}
+          {%- if color_values == blank -%}
+            {%- assign color_values = normalized_value -%}
+          {%- else -%}
+            {%- assign existing_colors = color_values | split: ' / ' -%}
+            {%- unless existing_colors contains normalized_value -%}
+              {%- assign color_values = color_values | append: ' / ' | append: normalized_value -%}
+            {%- endunless -%}
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- assign heat_value = '' -%}
+  {%- if p.tags contains 'heat-hot' -%}
+    {%- assign heat_value = heat_label_hot -%}
+  {%- elsif p.tags contains 'heat-best' -%}
+    {%- assign heat_value = heat_label_best -%}
+  {%- elsif p.tags contains 'heat-good' -%}
+    {%- assign heat_value = heat_label_good -%}
+  {%- elsif p.tags contains 'heat-normal' -%}
+    {%- assign heat_value = heat_label_normal -%}
+  {%- endif -%}
+
+  {%- if category_values != blank or size_values != blank or color_values != blank or heat_value != blank -%}
+    <style>
+      .product-spec-table--{{ spec_table_scope }} {
+        margin-top: 2rem;
+      }
+
+      .product-spec-table--{{ spec_table_scope }} .product-spec-table__table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid {{ table_border_color }};
+        font-size: {{ table_font_size }}px;
+        color: {{ table_text_color }};
+      }
+
+      .product-spec-table--{{ spec_table_scope }} .product-spec-table__table th,
+      .product-spec-table--{{ spec_table_scope }} .product-spec-table__table td {
+        padding: 1rem 1.2rem;
+        border-bottom: 1px solid {{ table_border_color }};
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .product-spec-table--{{ spec_table_scope }} .product-spec-table__table th {
+        width: 6.5rem;
+        color: {{ table_text_color }};
+        font-weight: 600;
+      }
+
+      .product-spec-table--{{ spec_table_scope }} .product-spec-table__table tr:last-child th,
+      .product-spec-table--{{ spec_table_scope }} .product-spec-table__table tr:last-child td {
+        border-bottom: 0;
+      }
+
+      @media screen and (max-width: 749px) {
+        .product-spec-table--{{ spec_table_scope }} .product-spec-table__table th,
+        .product-spec-table--{{ spec_table_scope }} .product-spec-table__table td {
+          display: block;
+          width: 100%;
+          padding: 0.8rem 1rem;
+        }
+
+        .product-spec-table--{{ spec_table_scope }} .product-spec-table__table th {
+          padding-bottom: 0.35rem;
+          border-bottom: 0;
+        }
+
+        .product-spec-table--{{ spec_table_scope }} .product-spec-table__table td {
+          padding-top: 0;
+        }
+      }
+    </style>
+
+    <div class="product-spec-table product-spec-table--{{ spec_table_scope }}" {% if block %}{{ block.shopify_attributes }}{% endif %}>
+      <table class="product-spec-table__table">
+        <tbody>
+          {%- if category_values != blank -%}
+            <tr>
+              <th scope="row">{{ spec_label_category }}</th>
+              <td>{{ category_values }}</td>
+            </tr>
+          {%- endif -%}
+          {%- if size_values != blank -%}
+            <tr>
+              <th scope="row">{{ spec_label_size }}</th>
+              <td>{{ size_values }}</td>
+            </tr>
+          {%- endif -%}
+          {%- if color_values != blank -%}
+            <tr>
+              <th scope="row">{{ spec_label_color }}</th>
+              <td>{{ color_values }}</td>
+            </tr>
+          {%- endif -%}
+          {%- if heat_value != blank -%}
+            <tr>
+              <th scope="row">{{ spec_label_heat }}</th>
+              <td>{{ heat_value }}</td>
+            </tr>
+          {%- endif -%}
+        </tbody>
+      </table>
+    </div>
+  {%- endif -%}
+{%- endif -%}
