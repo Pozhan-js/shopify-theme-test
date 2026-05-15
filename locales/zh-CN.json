@@ -168,7 +168,6 @@
       "nested_label": "{{ title }}，适用于 {{ parent_title }}",
       "view_full_details": "查看完整详细信息",
       "shipping_policy_html": "结账时计算的<a href=\"{{ link }}\">运费</a>。",
-      "no_table_data": "暂无表格数据",
       "choose_options": "选择选项",
       "choose_product_options": "选择用于 {{ product_name }} 的选项",
       "value_unavailable": "{{ option_value }} - 不可用",
