@@ -2294,23 +2294,3 @@
   ]
 }
 {% endschema %}
-
-{% comment %} Debug: show product metafields structure when ?debug_meta=1 or in theme editor {% endcomment %}
-{%- if request.design_mode or request.query.debug_meta == '1' -%}
-  <div class="product__meta-debug" style="white-space:pre-wrap;background:#f7f7f7;padding:12px;border:1px solid #eee;margin:12px 0;font-size:12px;">
-    <strong>product.metafields (debug)</strong>
-    <pre>{{ product.metafields | json }}</pre>
-
-    <strong>product.metafields.custom (debug)</strong>
-    <pre>{{ product.metafields.custom | json }}</pre>
-
-    <strong>product.metafields.custom['test-1'] (debug)</strong>
-    <pre>{{ product.metafields.custom['test-1'] | json }}</pre>
-
-    <strong>product.metafields.custom['test-2'] (debug)</strong>
-    <pre>{{ product.metafields.custom['test-2'] | json }}</pre>
-
-    <strong>product.metafields.custom['test-3'] (debug)</strong>
-    <pre>{{ product.metafields.custom['test-3'] | json }}</pre>
-  </div>
-{%- endif -%}
